@@ -1,12 +1,32 @@
-<html>
- <head>
- </head>
- <body>
-  <script src="https://www.puck-js.com/puck.js"></script>
-  <button onclick="Puck.write('LED1.set();\n');">Die rote Lampe aktivieren.</button>
-  <button onclick="Puck.write('LED2.set();\n');">Die grüne Lampe aktivieren.</button>
-  <button onclick="Puck.write('LED3.set();\n');">Die blaue Lampe aktivieren.</button>
-  
-  <button onclick="Puck.write('LED1.reset();\n');Puck.write('LED2.reset();\n');Puck.write('LED3.reset();\n');">Alle Lampen deaktivieren!</button>
- </body>
-</html>
+unction onButtonClick() {
+  let filters = [];
+
+  let filterService = document.querySelector('#service').value;
+  if (filterService.startsWith('0x')) {
+    filterService = parseInt(filterService);
+  }
+  if (filterService) {
+    filters.push({services: [filterService]});
+  }
+
+  let filterName = document.querySelector('#name').value;
+  if (filterName) {
+    filters.push({name: filterName});
+  }
+
+  let filterNamePrefix = document.querySelector('#namePrefix').value;
+  if (filterNamePrefix) {
+    filters.push({namePrefix: filterNamePrefix});
+  }
+
+  log('Requesting Bluetooth Device...');
+  navigator.bluetooth.requestDevice({filters: filters})
+  .then(device => {
+    log('> Name:             ' + device.name);
+    log('> Id:               ' + device.id);
+    log('> Connected:        ' + device.gatt.connected);
+  })
+  .catch(error => {
+    log('Argh! ' + error);
+  });
+}
